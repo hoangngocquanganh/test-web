@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
     <style>
-      :root{
+      :root, html[data-theme="light"]{
         color-scheme: light;
         --bg:#e8f5ff;
         --bg2:#fff3d6;
@@ -59,6 +59,32 @@
           --bad-bg:#4a1f30;
           --shadow:0 6px 0 rgba(0,0,0,.25), 0 14px 28px rgba(0,0,0,.35);
         }
+      }
+      html[data-theme="dark"]{
+        color-scheme: dark;
+        --bg:#121a2e;
+        --bg2:#1b2440;
+        --card:#1e2a47;
+        --card2:#243354;
+        --ink:#f2f6ff;
+        --muted:#a9bbdd;
+        --line:#33477a;
+        --simple:#2fe0b6;
+        --simple-dark:#2fe0b6;
+        --simple-bg:#0f3d33;
+        --cont:#ff7d9c;
+        --cont-dark:#ff7d9c;
+        --cont-bg:#4a1f30;
+        --sun:#ffc93c;
+        --sun-dark:#ffc93c;
+        --good:#3ddc84;
+        --good-bg:#123d28;
+        --bad:#ff7d9c;
+        --bad-bg:#4a1f30;
+        --shadow:0 6px 0 rgba(0,0,0,.25), 0 14px 28px rgba(0,0,0,.35);
+      }
+      html.large-text{
+        font-size:116%;
       }
       *{box-sizing:border-box}
       html{scroll-behavior:smooth}
@@ -225,10 +251,20 @@
       @media (max-width:640px){ .opts{grid-template-columns:1fr} }
       .opt-btn{
         border:3px solid var(--line); background:var(--card2); color:var(--ink); border-radius:16px;
-        padding:16px 14px; font-family:"Baloo 2",sans-serif; font-weight:700;
+        padding:15px 14px; font-family:"Baloo 2",sans-serif; font-weight:700;
         font-size:clamp(1.1rem,3vw,1.4rem); text-align:center; box-shadow:0 4px 0 rgba(0,0,0,.08);
         transition:transform .08s ease, background .15s ease, border-color .15s ease;
+        display:flex; align-items:center; justify-content:center; gap:8px;
       }
+      .opt-key{
+        display:inline-grid; place-items:center; width:30px; height:30px; border-radius:10px;
+        background:var(--card); border:2px solid var(--line);
+        font-family:"Baloo 2",sans-serif; font-weight:800; font-size:.95rem;
+        color:var(--muted); flex:0 0 auto; line-height:1;
+      }
+      .opt-btn:hover:not(:disabled) .opt-key{border-color:var(--blue); color:var(--blue)}
+      .opt-btn.right .opt-key{background:var(--good); color:#fff; border-color:var(--good)}
+      .opt-btn.wrong .opt-key{background:var(--bad); color:#fff; border-color:var(--bad)}
       .opt-btn:hover:not(:disabled){border-color:var(--blue); transform:translateY(-2px)}
       .opt-btn:disabled{cursor:default; opacity:.85}
       .opt-btn.right{background:var(--good-bg); border-color:var(--good); color:var(--ink); opacity:1}
@@ -410,6 +446,18 @@
           <small>TIẾNG ANH LỚP 4 · NHẬN BIẾT QUA DẤU HIỆU + CẤU TRÚC CÂU ĐƠN</small>
         </h1>
         <div class="topbar-actions">
+          <button class="icon-btn" id="font-toggle" type="button" title="Bật/Tắt cỡ chữ lớn cho máy chiếu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 19L10 5l6 14M6 14h8M18 13v6M15 16h6"/></svg>
+            <span id="font-text">Cỡ chữ</span>
+          </button>
+          <button class="icon-btn" id="theme-toggle" type="button" title="Chuyển chế độ Sáng / Tối">
+            <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <span id="theme-text">Giao diện</span>
+          </button>
+          <button class="icon-btn" id="fullscreen-toggle" type="button" title="Bật/Tắt chế độ Toàn màn hình">
+            <svg id="fs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            <span id="fs-text">Toàn màn hình</span>
+          </button>
           <button class="icon-btn" id="sound-toggle" type="button" aria-pressed="true"></button>
         </div>
       </div>
@@ -571,6 +619,25 @@
             <button class="count-btn" data-count="4" type="button">4 đội</button>
           </div>
           <div class="team-edit" id="team-edit"></div>
+          <div class="vs-grid" style="margin-top:16px">
+            <div>
+              <h3 style="margin:0 0 8px">Thời gian mỗi câu</h3>
+              <div class="team-count-row" id="timer-setting-row">
+                <button class="count-btn" data-sec="15" type="button">15s</button>
+                <button class="count-btn active" data-sec="20" type="button">20s (chuẩn)</button>
+                <button class="count-btn" data-sec="30" type="button">30s</button>
+                <button class="count-btn" data-sec="0" type="button">Vô hạn</button>
+              </div>
+            </div>
+            <div>
+              <h3 style="margin:0 0 8px">Số câu thi đấu</h3>
+              <div class="team-count-row" id="deck-size-row">
+                <button class="count-btn" data-size="12" type="button">12 câu (Nhanh)</button>
+                <button class="count-btn active" data-size="24" type="button">24 câu (Chuẩn)</button>
+                <button class="count-btn" data-size="32" type="button">32 câu (Dài)</button>
+              </div>
+            </div>
+          </div>
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:18px">
             <button class="btn pink big" id="game-start" type="button">Bắt đầu chơi — 24 câu</button>
             <button class="btn ghost" id="game-random-note" type="button">Câu hỏi được xáo ngẫu nhiên mỗi ván</button>
@@ -682,9 +749,15 @@
                 </select>
               </div>
             </div>
-            <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap">
+            <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center">
               <button class="btn sun" type="submit">Lưu câu hỏi</button>
               <button class="btn ghost" type="button" id="add-demo">Điền thử một câu mẫu</button>
+              <button class="btn ghost" type="button" id="export-json">Xuất file câu hỏi (.json)</button>
+              <label class="btn ghost" style="margin:0; cursor:pointer" title="Nhập danh sách câu hỏi từ file .json">
+                Nhập file câu (.json)
+                <input type="file" id="import-json" accept=".json,application/json" style="display:none" />
+              </label>
+              <button class="btn ghost" type="button" id="clear-custom" style="color:var(--bad)">Xóa hết câu tự thêm</button>
             </div>
           </form>
           <div class="custom-list" id="custom-list"></div>
@@ -694,15 +767,25 @@
       <!-- ================= HƯỚNG DẪN ================= -->
       <section class="page" id="page-guide">
         <div class="card">
-          <h2>Hướng dẫn cho giáo viên</h2>
+          <h2>Hướng dẫn cho giáo viên &amp; Phím tắt</h2>
           <p class="sub">Một tiết học gợi ý: 5 phút Học nhanh → 5 phút Luyện tập → 20 phút Game chia đội.</p>
           <div class="guide-grid">
+            <div class="guide-box">
+              <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M7 16h10"/></svg>Phím tắt &amp; Máy chiếu</h3>
+              <ul>
+                <li><strong>Phím 1, 2, 3, 4</strong> hoặc <strong>A, B, C, D</strong>: Chọn nhanh đáp án tương ứng.</li>
+                <li><strong>Phím Space (Cách)</strong>: Nghe phát âm câu hỏi / Lật flashcard.</li>
+                <li><strong>Phím Enter hoặc Mũi tên phải (→)</strong>: Sang câu tiếp theo.</li>
+                <li><strong>Nút Cỡ chữ &amp; Toàn màn hình</strong> trên góc phải: Phù hợp máy chiếu lớp học.</li>
+                <li><strong>Lưu trữ tự động</strong>: Toàn bộ câu hỏi tự thêm được lưu bền vững trên trình duyệt (Local Storage).</li>
+              </ul>
+            </div>
             <div class="guide-box">
               <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7.5" r="3.5"/><path d="M22 21v-2a4 4 0 0 0-3-3.85M15.5 4.15a3.5 3.5 0 0 1 0 6.7"/></svg>Cách chia đội</h3>
               <ul>
                 <li>Vào mục <strong>3 · Game chia đội</strong>, chọn 2, 3 hoặc 4 đội.</li>
                 <li>Cho mỗi đội tự đặt tên, chọn màu và linh vật con vật.</li>
-                <li>Bấm <strong>Bắt đầu chơi</strong>: 24 câu, các đội trả lời lần lượt theo vòng tròn, hiện rõ "Lượt của đội nào".</li>
+                <li>Bấm <strong>Bắt đầu chơi</strong>: các đội trả lời lần lượt theo vòng tròn, hiện rõ "Lượt của đội nào".</li>
                 <li>Chiếu màn hình lên bảng, cho cả lớp cùng đọc câu và gợi ý cho đội mình.</li>
               </ul>
             </div>
@@ -711,7 +794,7 @@
               <ul>
                 <li>Trả lời đúng: <strong>+10 điểm</strong>. Đúng nhanh trong 5 giây đầu: <strong>+5 điểm thưởng</strong>.</li>
                 <li>Trả lời sai: <strong>không trừ điểm</strong> — nhưng đội khác được <strong>cướp điểm</strong>: bấm tên đội xung phong, trả lời đúng được <strong>+5</strong>.</li>
-                <li>Mỗi câu có đồng hồ đếm ngược 15–20 giây (riêng dạng sắp xếp từ: 30 giây). Hết giờ tính như trả lời sai.</li>
+                <li>Đồng hồ đếm ngược có thể tùy chỉnh: 15s / 20s / 30s hoặc Vô hạn thời gian.</li>
                 <li>Giáo viên là trọng tài: cộng / trừ điểm thủ công bằng nút + / − trên thẻ điểm, hoặc Qua câu, Hiện đáp án, Đặt lại ván.</li>
               </ul>
             </div>
@@ -721,18 +804,18 @@
                 <li><strong>Săn dấu hiệu</strong> — tìm "mật mã" trong câu.</li>
                 <li><strong>Phân loại câu</strong> — Thói quen hay Đang diễn ra?</li>
                 <li><strong>Chọn thì đúng</strong> và <strong>Chia động từ</strong> — luyện cấu trúc câu đơn.</li>
-                <li><strong>Sắp xếp từ</strong> — ghép thành câu đúng thứ tự.</li>
+                <li><strong>Sắp xếp từ</strong> — ghép thành câu đúng thứ tự (có nút hoàn tác từ cuối).</li>
                 <li><strong>Thám tử sửa lỗi</strong> — tìm câu sai s/es, am/is/are, V-ing.</li>
                 <li><strong>Nhìn tranh đặt câu</strong> và <strong>Nghe và chọn</strong> — nghe máy đọc rồi chọn thì.</li>
               </ul>
             </div>
             <div class="guide-box">
-              <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Cách thêm câu hỏi</h3>
+              <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Cách thêm &amp; lưu câu hỏi</h3>
               <ul>
                 <li>Vào mục <strong>Thêm câu hỏi</strong>, chọn dạng bài, gõ câu và các đáp án.</li>
                 <li>Gõ <strong>dấu hiệu</strong> đúng y như trong câu (VD: <em>every day</em>) để web tự tô màu và sinh giải thích.</li>
                 <li>Dạng điền chỗ trống: gõ <strong>___</strong> ở vị trí cần điền.</li>
-                <li>Câu đã thêm dùng được ngay trong buổi học; ngân hàng có sẵn 64 câu, mỗi ván chơi rút ngẫu nhiên nên chơi lại không trùng.</li>
+                <li>Có nút <strong>Xuất / Nhập JSON</strong> để chuyển câu hỏi sang máy tính khác hoặc lưu trữ lâu dài.</li>
               </ul>
             </div>
             <div class="guide-box">
@@ -772,8 +855,15 @@
       toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
     }
 
-    /* =============== Âm thanh (Web Audio) =============== */
-    let audioCtx = null, soundOn = true;
+    /* =============== Âm thanh & Cài đặt hiển thị =============== */
+    const STORAGE_KEY_SOUND = "detective_sound";
+    const STORAGE_KEY_THEME = "detective_theme";
+    const STORAGE_KEY_FONT  = "detective_font_scale";
+    const STORAGE_KEY_CUSTOM = "detective_custom_questions_v2";
+
+    let audioCtx = null;
+    let soundOn = localStorage.getItem(STORAGE_KEY_SOUND) !== "0";
+
     function ac(){
       if (!audioCtx){
         const AC = window.AudioContext || window.webkitAudioContext;
@@ -803,12 +893,155 @@
       win(){ [523,659,784,1047,784,1047,1319].forEach((f,i)=>tone(f, i*0.13, 0.3, "triangle", 0.18)); },
       steal(){ tone(988, 0, 0.1, "square", 0.1); tone(1319, 0.09, 0.16, "square", 0.1); }
     };
+
     const ICON_SOUND_ON  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.4 5.6a9 9 0 0 1 0 12.8"/></svg><span>Âm thanh: Bật</span>';
     const ICON_SOUND_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M22 9l-6 6M16 9l6 6"/></svg><span>Âm thanh: Tắt</span>';
     const soundBtn = $("#sound-toggle");
-    function renderSoundBtn(){ soundBtn.innerHTML = soundOn ? ICON_SOUND_ON : ICON_SOUND_OFF; soundBtn.classList.toggle("off", !soundOn); soundBtn.setAttribute("aria-pressed", String(soundOn)); }
-    soundBtn.addEventListener("click", () => { soundOn = !soundOn; renderSoundBtn(); if (soundOn) sfx.click(); });
+    function renderSoundBtn(){
+      soundBtn.innerHTML = soundOn ? ICON_SOUND_ON : ICON_SOUND_OFF;
+      soundBtn.classList.toggle("off", !soundOn);
+      soundBtn.setAttribute("aria-pressed", String(soundOn));
+    }
+    soundBtn.addEventListener("click", () => {
+      soundOn = !soundOn;
+      localStorage.setItem(STORAGE_KEY_SOUND, soundOn ? "1" : "0");
+      renderSoundBtn();
+      if (soundOn) sfx.click();
+    });
     renderSoundBtn();
+
+    /* --- Cỡ chữ lớn màn chiếu --- */
+    const fontBtn = $("#font-toggle");
+    if (localStorage.getItem(STORAGE_KEY_FONT) === "large"){
+      document.documentElement.classList.add("large-text");
+    }
+    function renderFontBtn(){
+      const isLarge = document.documentElement.classList.contains("large-text");
+      $("#font-text").textContent = isLarge ? "Chữ to" : "Chữ chuẩn";
+      fontBtn.classList.toggle("active", isLarge);
+    }
+    fontBtn.addEventListener("click", () => {
+      sfx.click();
+      const isLarge = document.documentElement.classList.toggle("large-text");
+      localStorage.setItem(STORAGE_KEY_FONT, isLarge ? "large" : "normal");
+      renderFontBtn();
+      toast(isLarge ? "Đã bật chế độ Chữ lớn cho máy chiếu." : "Đã chuyển về Cỡ chữ chuẩn.");
+    });
+    renderFontBtn();
+
+    /* --- Chế độ Sáng / Tối --- */
+    const themeBtn = $("#theme-toggle");
+    const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
+    if (savedTheme){
+      document.documentElement.setAttribute("data-theme", savedTheme);
+    }
+    function isDarkMode(){
+      const attr = document.documentElement.getAttribute("data-theme");
+      if (attr === "dark") return true;
+      if (attr === "light") return false;
+      return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    function renderThemeBtn(){
+      const dark = isDarkMode();
+      $("#theme-text").textContent = dark ? "Tối" : "Sáng";
+      $("#theme-icon").innerHTML = dark ?
+        '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>' :
+        '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+    }
+    themeBtn.addEventListener("click", () => {
+      sfx.click();
+      const currentDark = isDarkMode();
+      const nextTheme = currentDark ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", nextTheme);
+      localStorage.setItem(STORAGE_KEY_THEME, nextTheme);
+      renderThemeBtn();
+      toast(nextTheme === "dark" ? "Đã bật giao diện Tối." : "Đã bật giao diện Sáng.");
+    });
+    renderThemeBtn();
+
+    /* --- Toàn màn hình (Fullscreen) --- */
+    const fsBtn = $("#fullscreen-toggle");
+    function renderFsBtn(){
+      const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+      $("#fs-text").textContent = isFs ? "Thu nhỏ" : "Toàn màn hình";
+    }
+    fsBtn.addEventListener("click", () => {
+      sfx.click();
+      if (!document.fullscreenElement && !document.webkitFullscreenElement){
+        if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+        else if (document.documentElement.webkitRequestFullscreen) document.documentElement.webkitRequestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      }
+    });
+    document.addEventListener("fullscreenchange", renderFsBtn);
+    document.addEventListener("webkitfullscreenchange", renderFsBtn);
+    renderFsBtn();
+
+    /* --- Phím tắt bàn phím (Keyboard Shortcuts) --- */
+    window.addEventListener("keydown", e => {
+      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : "";
+      if (tag === "input" || tag === "textarea" || tag === "select") return;
+
+      const key = e.key;
+      if (key === " " || key === "Spacebar"){
+        const learnPage = $("#page-learn");
+        if (learnPage && learnPage.classList.contains("show")){
+          e.preventDefault();
+          const flash = $("#flash");
+          if (flash) flash.click();
+          return;
+        }
+        const speakBtn = $("#game-speak-q");
+        if (speakBtn && !speakBtn.classList.contains("hidden")){
+          e.preventDefault();
+          speakBtn.click();
+          return;
+        }
+        const activePage = document.querySelector("section.page.show");
+        const speakInPage = activePage ? activePage.querySelector(".speak-btn") : null;
+        if (speakInPage){
+          e.preventDefault();
+          speakInPage.click();
+          return;
+        }
+      }
+
+      if (key === "Enter" || key === "ArrowRight"){
+        const pNext = $("#practice-next");
+        if (pNext && !pNext.classList.contains("hidden")){
+          e.preventDefault();
+          pNext.click();
+          return;
+        }
+        const gNext = $("#game-next");
+        if (gNext && !gNext.classList.contains("hidden")){
+          e.preventDefault();
+          gNext.click();
+          return;
+        }
+      }
+
+      let optIdx = -1;
+      if (key >= "1" && key <= "4") optIdx = Number(key) - 1;
+      else if (key === "a" || key === "A") optIdx = 0;
+      else if (key === "b" || key === "B") optIdx = 1;
+      else if (key === "c" || key === "C") optIdx = 2;
+      else if (key === "d" || key === "D") optIdx = 3;
+
+      if (optIdx >= 0){
+        const activePage = document.querySelector("section.page.show");
+        if (activePage){
+          const opts = Array.from(activePage.querySelectorAll(".opt-btn:not(:disabled)"));
+          const targetBtn = opts.find(b => Number(b.dataset.idx) === optIdx);
+          if (targetBtn){
+            e.preventDefault();
+            targetBtn.click();
+          }
+        }
+      }
+    });
 
     /* =============== Đọc tiếng Anh (Web Speech API) =============== */
     function speak(text){
@@ -1129,7 +1362,12 @@
         });
         wrap.appendChild(bank);
         const checkRow = document.createElement("div");
-        checkRow.style.textAlign = "center";
+        checkRow.style.display = "flex";
+        checkRow.style.gap = "10px";
+        checkRow.style.justifyContent = "center";
+        checkRow.style.flexWrap = "wrap";
+        checkRow.style.margin = "8px 0";
+
         const checkBtn = document.createElement("button");
         checkBtn.type = "button"; checkBtn.className = "btn big teal"; checkBtn.textContent = "Kiểm tra câu";
         checkBtn.addEventListener("click", () => {
@@ -1139,6 +1377,30 @@
           handlers.onAnswer(built === q.sentence, built);
         });
         checkRow.appendChild(checkBtn);
+
+        const undoBtn = document.createElement("button");
+        undoBtn.type = "button"; undoBtn.className = "btn ghost"; undoBtn.textContent = "↩ Xóa từ cuối";
+        undoBtn.title = "Bỏ từ vừa chọn gần nhất";
+        undoBtn.addEventListener("click", () => {
+          if (handlers.locked() || !chosen.length) return;
+          const last = chosen.pop();
+          chipEls[last.i].classList.remove("used");
+          sfx.click(); refreshLine();
+        });
+        checkRow.appendChild(undoBtn);
+
+        const resetBtn = document.createElement("button");
+        resetBtn.type = "button"; resetBtn.className = "btn ghost"; resetBtn.textContent = "Làm lại";
+        resetBtn.title = "Xếp lại từ đầu";
+        resetBtn.addEventListener("click", () => {
+          if (handlers.locked() || !chosen.length) return;
+          while (chosen.length){
+            const c = chosen.pop();
+            chipEls[c.i].classList.remove("used");
+          }
+          sfx.click(); refreshLine();
+        });
+        checkRow.appendChild(resetBtn);
         wrap.appendChild(checkRow);
         handlers.extra = { getBuilt: () => chosen.map(c => c.w).join(" ").replace(/\s+([.,!?])/g, "$1") };
       } else {
@@ -1165,11 +1427,12 @@
       if (q.type !== "arrange"){
         const opts = document.createElement("div");
         opts.className = "opts";
+        const KEY_LABELS = ["A", "B", "C", "D"];
         q.options.forEach((opt, i) => {
           const b = document.createElement("button");
           b.type = "button";
           b.className = "opt-btn" + (q.options.length === 2 ? " big-two" : "");
-          b.textContent = opt;
+          b.innerHTML = '<span class="opt-key">' + (KEY_LABELS[i] || (i + 1)) + '</span><span>' + esc(opt) + '</span>';
           b.dataset.idx = String(i);
           b.addEventListener("click", () => {
             if (handlers.locked()) return;
@@ -1219,14 +1482,24 @@
       return {
         start(seconds){
           this.stop();
-          total = remain = seconds; lastWhole = -1;
           const fill = $("#timer-fill"), num = $("#timer-num");
+          if (seconds <= 0){
+            total = remain = 9999;
+            if (fill) { fill.style.width = "100%"; fill.className = "timer-fill"; }
+            if (num) { num.textContent = "⏱ Vô hạn"; num.classList.remove("low"); }
+            return;
+          }
+          total = remain = seconds; lastWhole = -1;
           const paint = () => {
             const pct = total ? Math.max(0, (remain / total) * 100) : 0;
-            fill.style.width = pct + "%";
-            fill.className = "timer-fill" + (pct <= 25 ? " low" : pct <= 50 ? " mid" : "");
-            num.textContent = "⏱ " + Math.max(0, Math.ceil(remain)) + "s";
-            num.classList.toggle("low", pct <= 25);
+            if (fill){
+              fill.style.width = pct + "%";
+              fill.className = "timer-fill" + (pct <= 25 ? " low" : pct <= 50 ? " mid" : "");
+            }
+            if (num){
+              num.textContent = "⏱ " + Math.max(0, Math.ceil(remain)) + "s";
+              num.classList.toggle("low", pct <= 25);
+            }
           };
           paint();
           iv = setInterval(() => {
@@ -1320,6 +1593,7 @@
     }
 
     /* =============== PHẦN 3: GAME CHIA ĐỘI =============== */
+    const STORAGE_KEY_TEAMS = "detective_teams_v2";
     const TEAM_COLORS = ["#ef476f","#3a86ff","#ffb703","#22b573","#9b5de5","#ff7b00","#00b4d8","#e63946"];
     const DEFAULT_TEAMS = [
       { name: "Đội Hổ",    color: "#ef476f", animal: "tiger" },
@@ -1329,6 +1603,41 @@
     ];
     let teamCount = 3;
     let teamDrafts = DEFAULT_TEAMS.map(t => ({ ...t }));
+    try {
+      const savedTeams = localStorage.getItem(STORAGE_KEY_TEAMS);
+      if (savedTeams){
+        const parsed = JSON.parse(savedTeams);
+        if (Array.isArray(parsed) && parsed.length >= 2) teamDrafts = parsed;
+      }
+    } catch(e){}
+
+    function saveTeams(){
+      try { localStorage.setItem(STORAGE_KEY_TEAMS, JSON.stringify(teamDrafts)); } catch(e){}
+    }
+
+    let gameTimerSetting = 20; // 15 | 20 | 30 | 0 (0 = vô hạn)
+    let gameDeckSize = 24;     // 12 | 24 | 32
+
+    function setupGameSettings(){
+      $$("#timer-setting-row .count-btn").forEach(b => {
+        b.addEventListener("click", () => {
+          sfx.click();
+          gameTimerSetting = Number(b.dataset.sec);
+          $$("#timer-setting-row .count-btn").forEach(x => x.classList.remove("active"));
+          b.classList.add("active");
+          toast(gameTimerSetting === 0 ? "Đã tắt giới hạn thời gian (Vô hạn)." : "Thời gian mỗi câu: " + gameTimerSetting + " giây.");
+        });
+      });
+      $$("#deck-size-row .count-btn").forEach(b => {
+        b.addEventListener("click", () => {
+          sfx.click();
+          gameDeckSize = Number(b.dataset.size);
+          $$("#deck-size-row .count-btn").forEach(x => x.classList.remove("active"));
+          b.classList.add("active");
+          $("#game-start").textContent = "Bắt đầu chơi — " + gameDeckSize + " câu";
+        });
+      });
+    }
 
     function renderTeamSetup(){
       $("#team-count-row").innerHTML = "";
@@ -1351,7 +1660,10 @@
         const input = document.createElement("input");
         input.type = "text"; input.value = d.name; input.maxLength = 18;
         input.setAttribute("aria-label", "Tên đội " + (i + 1));
-        input.addEventListener("input", () => { teamDrafts[i].name = input.value; });
+        input.addEventListener("input", () => {
+          teamDrafts[i].name = input.value;
+          saveTeams();
+        });
         head.appendChild(input);
         card.appendChild(head);
 
@@ -1364,6 +1676,7 @@
           dot.style.background = c; dot.setAttribute("aria-label", "Chọn màu " + c);
           dot.addEventListener("click", () => {
             sfx.click(); teamDrafts[i].color = c;
+            saveTeams();
             $$(".color-dot", cl).forEach(x => x.classList.remove("active")); dot.classList.add("active");
           });
           cl.appendChild(dot);
@@ -1380,6 +1693,7 @@
           ap.setAttribute("aria-label", "Chọn linh vật " + ANIMALS[k].name);
           ap.addEventListener("click", () => {
             sfx.click(); teamDrafts[i].animal = k;
+            saveTeams();
             $$(".animal-pick", al).forEach(x => x.classList.remove("active")); ap.classList.add("active");
             $(".mascot-slot", card).innerHTML = animalSVG(k, 52);
           });
@@ -1403,15 +1717,15 @@
       const deck = [];
       let round = shuffle(TYPE_ORDER.slice());
       let ri = 0, guard = 0;
-      while (deck.length < 24 && guard++ < 500){
+      const target = gameDeckSize || 24;
+      while (deck.length < target && guard++ < 800){
         const t = round[ri % round.length]; ri++;
         if (byType[t].length) deck.push(byType[t].pop());
         if (ri % round.length === 0) round = shuffle(TYPE_ORDER.slice());
       }
-      // Dự phòng nếu ngân hàng thiếu (không xảy ra với 64 câu có sẵn)
-      if (deck.length < 24){
+      if (deck.length < target){
         const rest = shuffle(pool.filter(q => !deck.includes(q)));
-        while (deck.length < 24 && rest.length) deck.push(rest.pop());
+        while (deck.length < target && rest.length) deck.push(rest.pop());
       }
       return deck;
     }
@@ -1459,6 +1773,11 @@
 
     function currentQ(){ return game.deck[game.idx]; }
 
+    function getQuestionTime(q){
+      if (gameTimerSetting === 0) return 0;
+      return gameTimerSetting || (q ? TYPE_INFO[q.type].time : 20);
+    }
+
     function renderGameQ(){
       const q = currentQ();
       game.turn = game.idx % game.teams.length;
@@ -1466,8 +1785,9 @@
       game.phase = "main";
       game.locked = false;
       game.startedAt = Date.now();
+      const qTime = getQuestionTime(q);
       $("#game-progress").textContent = "Câu " + (game.idx + 1) + " / " + game.deck.length + " · Vòng " + (Math.floor(game.idx / game.teams.length) + 1);
-      $("#game-badge").innerHTML = TYPE_INFO[q.type].svg + " " + esc(TYPE_INFO[q.type].name) + " · " + TYPE_INFO[q.type].time + " giây";
+      $("#game-badge").innerHTML = TYPE_INFO[q.type].svg + " " + esc(TYPE_INFO[q.type].name) + (qTime === 0 ? " · Vô hạn" : " · " + qTime + " giây");
       const tb = $("#turn-banner");
       const t = game.teams[game.turn];
       tb.innerHTML = 'Lượt của <span class="team-pill" style="background:' + t.color + '">' + esc(t.name) + "</span>";
@@ -1477,10 +1797,10 @@
       renderScoreboard();
       renderQuestion($("#game-body"), q, {
         locked: () => game.locked,
-        onListen(){ if (game.phase === "main" || game.phase === "steal") game.timer.start(TYPE_INFO[q.type].time); },
+        onListen(){ if (game.phase === "main" || game.phase === "steal") game.timer.start(getQuestionTime(q)); },
         onAnswer(ok, chosenText, btn){ handleGameAnswer(ok, chosenText, btn); }
       });
-      if (q.type !== "listen") game.timer.start(TYPE_INFO[q.type].time);
+      if (q.type !== "listen") game.timer.start(qTime);
       else { $("#timer-fill").style.width = "100%"; $("#timer-num").textContent = "⏱ Nghe trước nhé"; }
     }
 
@@ -1722,18 +2042,29 @@
       })(t0);
     }
 
-    /* =============== THÊM CÂU HỎI (dùng ngay trong buổi học) =============== */
-    const customQuestions = [];
+    /* =============== THÊM CÂU HỎI (lưu bền vững & xuất/nhập file) =============== */
+    let customQuestions = [];
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_CUSTOM);
+      if (saved) customQuestions = JSON.parse(saved);
+      if (!Array.isArray(customQuestions)) customQuestions = [];
+    } catch(e){ customQuestions = []; }
+
+    function saveCustomQuestions(){
+      try { localStorage.setItem(STORAGE_KEY_CUSTOM, JSON.stringify(customQuestions)); } catch(e){}
+    }
+
     function getPool(){ return BANK.concat(customQuestions); }
+
     function renderCustomList(){
       const box = $("#custom-list");
       box.innerHTML = "";
       if (!customQuestions.length){
-        box.innerHTML = '<p class="sub" style="margin:0">Chưa có câu tự thêm trong buổi học này. Ngân hàng có sẵn: ' + BANK.length + " câu.</p>";
+        box.innerHTML = '<p class="sub" style="margin:0">Chưa có câu tự thêm nào được lưu. Ngân hàng có sẵn: ' + BANK.length + " câu.</p>";
         return;
       }
       const title = document.createElement("h3");
-      title.textContent = "Câu đã thêm (" + customQuestions.length + ") — đang dùng trong Luyện tập & Game";
+      title.textContent = "Câu đã lưu trong trình duyệt (" + customQuestions.length + ") — dùng trong Luyện tập & Game";
       box.appendChild(title);
       customQuestions.forEach((q, i) => {
         const div = document.createElement("div");
@@ -1741,11 +2072,17 @@
         div.innerHTML = "<span><strong>" + esc(TYPE_INFO[q.type].name) + ":</strong> " + esc(q.sentence) + "<br>Đáp án đúng: <strong>" + esc(q.options[q.answer]) + "</strong> · Dấu hiệu: " + esc(q.signal) + "</span>";
         const del = document.createElement("button");
         del.type = "button"; del.className = "btn ghost"; del.textContent = "Xóa";
-        del.addEventListener("click", () => { customQuestions.splice(i, 1); renderCustomList(); toast("Đã xóa câu hỏi."); });
+        del.addEventListener("click", () => {
+          customQuestions.splice(i, 1);
+          saveCustomQuestions();
+          renderCustomList();
+          toast("Đã xóa câu hỏi.");
+        });
         div.appendChild(del);
         box.appendChild(div);
       });
     }
+
     $("#add-form").addEventListener("submit", e => {
       e.preventDefault();
       const type = $("#f-type").value;
@@ -1759,11 +2096,13 @@
         toast("Lưu ý: dấu hiệu chưa xuất hiện trong câu — hãy kiểm tra lại chính tả của dấu hiệu.");
       }
       customQuestions.push({ type, tense: $("#f-tense").value, signal, sentence, options: opts, answer: correct });
+      saveCustomQuestions();
       renderCustomList();
       e.target.reset();
-      toast("Đã thêm câu hỏi! Tổng ngân hàng giờ có " + getPool().length + " câu.");
+      toast("Đã lưu câu hỏi vào bộ nhớ! Ngân hàng hiện có " + getPool().length + " câu.");
       sfx.correct();
     });
+
     $("#add-demo").addEventListener("click", () => {
       $("#f-type").value = "choose";
       $("#f-sentence").value = "She ___ her homework every evening.";
@@ -1773,10 +2112,71 @@
       toast("Đã điền câu mẫu — bấm Lưu câu hỏi để thêm vào ngân hàng.");
     });
 
+    /* --- Xuất / Nhập JSON câu hỏi --- */
+    $("#export-json").addEventListener("click", () => {
+      sfx.click();
+      if (!customQuestions.length){
+        toast("Chưa có câu hỏi tự thêm nào để xuất file. Hãy thêm câu hỏi trước!");
+        return;
+      }
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(customQuestions, null, 2));
+      const a = document.createElement("a");
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", "cau-hoi-tham-tu-hai-thi-" + new Date().toISOString().slice(0, 10) + ".json");
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      toast("Đã tải xuống file JSON chứa " + customQuestions.length + " câu hỏi.");
+    });
+
+    $("#import-json").addEventListener("change", e => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          const list = JSON.parse(ev.target.result);
+          if (!Array.isArray(list)) throw new Error("File không đúng cấu trúc danh sách câu hỏi.");
+          let validCount = 0;
+          list.forEach(item => {
+            if (item && item.sentence && item.options && typeof item.answer === "number"){
+              customQuestions.push(item);
+              validCount++;
+            }
+          });
+          if (!validCount) throw new Error("Không tìm thấy câu hỏi hợp lệ nào trong file.");
+          saveCustomQuestions();
+          renderCustomList();
+          toast("Đã nhập thành công " + validCount + " câu hỏi từ file!");
+          sfx.correct();
+        } catch(err){
+          toast("Lỗi đọc file: " + err.message);
+          sfx.wrong();
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = "";
+    });
+
+    $("#clear-custom").addEventListener("click", () => {
+      if (!customQuestions.length){
+        toast("Chưa có câu tự thêm nào.");
+        return;
+      }
+      if (confirm("Thầy/Cô có chắc chắn muốn xóa tất cả " + customQuestions.length + " câu hỏi tự thêm không?")){
+        customQuestions = [];
+        saveCustomQuestions();
+        renderCustomList();
+        toast("Đã xóa toàn bộ câu hỏi tự thêm.");
+        sfx.click();
+      }
+    });
+
     /* =============== Khởi tạo =============== */
     buildSignalChips();
     renderFlash();
     renderTeamSetup();
+    setupGameSettings();
     renderCustomList();
     </script>
   </body>
